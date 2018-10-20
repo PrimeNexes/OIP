@@ -1,0 +1,32 @@
+<videopage class="app-page" >
+        <div id="video">
+            <template v-if="isSearch === false">
+                    <header class="header-bar" id="headerBar">
+                            <div class="left">
+                                <button class="btn pull-left icon icon-arrow-back" data-navigation="$previous-page"></button>
+                                <div class="center">
+                                    <h1 class="title">Videos    </h1>
+                                </div>
+                                <a class="btn pull-right" v-on:click="swaptoSearch(true)">Search</a>
+                            </div>
+                    </header>                
+                    </template>
+                    <template v-else>
+                        <header class="header-bar">
+                                <a class="btn pull-left icon icon-close" v-on:click="swaptoSearch(false)"></a>
+                                <input type="text" class=" pull-left search-input" placeholder="Search" v-model="search">
+                        </header>
+                    </template>
+        <div class="content">
+            <ul class="list" v-for="video in filteredList">
+                <li><a v-bind:href="video.link" class="padded-list">{{video.title}}</a></li>
+            </ul>
+        </div>
+    </div>
+</videopage>
+    
+    <script>
+        /*
+         * JavaScript code can be executed when the template is loaded
+         */
+    </script>
