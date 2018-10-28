@@ -2,15 +2,12 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
+        <meta name="format-detection" content="telephone=no"/>
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-
-        <link rel="stylesheet" href="dist/css/phonon.css" />
-        <link rel="stylesheet" href="css/musicpage.css" />
-
-        <title  id="appTitle" >{{ message }}</title>
+        <link rel="stylesheet" href="dist/css/phonon.css"/>
+        <title  id="appTitle" >OIP</title>
     </head>
-    <body >
+    <body>
 
         <!-- Panel tags go here -->
 
@@ -27,35 +24,34 @@
 
             <header class="header-bar" >
                 <div class="center" >
-                    <h1 class="title" id="appPageTitle">{{ message }}</h1>
+                    <h1 class="title" id="appPageTitle">Login</h1>
                 </div>
             </header>
-            <div class="content">
+            <div class="content padded-full">
 
-                <ul class="list">
-                    <li class="divider">Select a pizza</li>
-                    <li><a class="padded-list" href="#!pagetwo/margherita">Margherita</a></li>
-                    <li><a class="padded-list" href="#!pagetwo/calzone">Cheese Calzone</a></li>
-                    <li><a class="padded-list" href="#!pagetwo/pesto">Pesto Pizza</a></li>
-                    <li><a class="padded-list" href="#!pagetwo/roma">Roma</a></li>
-                    <li><a class="padded-list" href="#!pagetwo/prosciutto">Prosciutto</a></li>
-                    <li><a class="padded-list" href="#!pagetwo/funghi">Funghi</a></li>
-                    <li><a class="padded-list" href="#!formpage">Fill Forms</a></li>
-                    <li><a class="padded-list" href="#!musicpage">Music Page</a></li>
-                    <li><a class="padded-list" href="#!ebookpage">Ebook Page</a></li>
-                </ul>
-
+                    <div id="login-form">
+                        <input type="number" placeholder="Phone Number" v-model="phoneNumber">
+                        <input type="password" placeholder="Password" v-model="password">
+                        <br>
+                        <button class="btn fit-parent primary " v-on:click="processForm">Login</button>
+                        <br>
+                        <button data-navigation='registerpage' class="btn fit-parent secondary ">Register</button>
+                    </div>
             </div>
         </home>
 
         <!-- for the second page, Phonon will load its content. -->
-        <pagetwo data-page="true"></pagetwo>
+        <menupage data-page="true"></menupage>
+        <registerpage data-page="true"></registerpage>
         <formpage data-page="true"></formpage>
         <fillformpage data-page="true"></fillformpage>
-        <musicpage data-page="true"></musicpage>
-        <ebookpage data-page="true"></ebookpage>
+        <musicpage data-page="true"></musicpage> 
+        <bookpage data-page="true"></bookpage>
+        <videopage data-page="true"></videopage>
+
         <!-- scripts -->
         <script src="js/vue.js"></script>
+        <script src="js/axios.js"></script>
         <script src="dist/js/phonon.js"></script>
 
         <!-- our app config -->

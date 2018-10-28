@@ -1,0 +1,19 @@
+<registerpage data-page="true" >
+
+    <header class="header-bar" >
+        <div class="left">
+            <button class="btn pull-left icon icon-arrow-back" data-navigation="$previous-page"></button>
+                <h1 class="title">Register</h1>
+            </div>
+    </header>
+    <div class="content padded-full">
+
+            <div id="register-form">
+                <input type="text" placeholder="Name" v-model="name">
+                <input type="number" placeholder="Phone Number" v-model="phoneNumber">
+                <input type="password" placeholder="Password" v-model="password">
+
+                <button class="btn fit-parent primary " v-on:click="processForm">Register</button>
+            </div>
+    </div>
+</registerpage>

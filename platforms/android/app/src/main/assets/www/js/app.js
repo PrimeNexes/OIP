@@ -1,3 +1,4 @@
+
 phonon.options({
     navigator: {
         defaultPage: 'home',
@@ -35,27 +36,30 @@ app.on({page: 'home', preventClose: false, content: null},function(activity){
             // our methods
             methods: {
               processForm: function() {
-                axios.post('http://localhost:8080/api/login', {
+                axios.post('http://192.168.31.99:8080/api/login', {
                     name: this.name,
                     phoneNumber: this.phoneNumber,
-                    password:this.password
+                    password:this.password,
+                    
                   })
                   .then(function (response) {
                     if(response.data.errors){
-                        console.log(response.data.message);
+                        phonon.notif(response.data.errors, 3000, true);
+
                     }
                     else{
+                        console.log(response.data);
                         phonon.navigator().changePage('menupage');
                     }
                   })
                   .catch(function (error) {
-                    console.log(error);
+                    phonon.notif(error.message, 3000, true);
                   });
                 
               }
             }
           });
-    })
+    });
 
 });
 
@@ -81,6 +85,53 @@ app.on({page: 'menupage', preventClose: true, content: 'menupage.html', readyDel
 
 });
 
+//Register Page
+app.on({page: 'registerpage', preventClose: true, content: 'registerpage.html', readyDelay: 1},function(activity){
+
+    activity.onCreate(function(){
+        new Vue({
+           el: '#register-form',
+         
+           // our data
+           data: {
+             name: '',
+             phoneNumber: '',
+             password:''
+           },
+         
+           // our methods
+           methods: {
+             processForm: function() {
+               axios.post('http://192.168.31.99:8080/api/register', {
+                   name: this.name,
+                   phoneNumber: this.phoneNumber,
+                   password:this.password
+                 })
+                 .then(function (response) {
+                   if(response.data.errors){
+                       phonon.notif(response.data.errors, 3000, true);
+
+                   }
+                   else{
+                       console.log(response.data);
+                       phonon.navigator().changePage('menupage');
+                   }
+                 })
+                 .catch(function (error) {
+                    phonon.notif(error.message, 3000, true);
+                  });
+               
+             }
+           }
+         });
+   });
+
+    activity.onClose(function(self) {
+        self.close();
+    });
+
+});
+
 //Form Page
 app.on({page: 'formpage', preventClose: true, content: 'formpage.html', readyDelay: 1},function(activity){
 
@@ -92,19 +143,36 @@ app.on({page: 'formpage', preventClose: true, content: 'formpage.html', readyDel
       }
       
     activity.onCreate(function(){
+
+        var formList=[];
+        axios.get('http://192.168.31.99:8080/api/getForms', {
+            name: this.name,
+            phoneNumber: this.phoneNumber,
+            password:this.password,
+          })
+          .then(function (response) {
+            if(response.data.errors){
+                phonon.notif(response.data.errors, 3000, true);
+
+            }
+            else{
+                response.data.data.forEach(element => {
+                    formList.push(new Form(element.title,'#!fillformpage/'+element.title));
+                });
+                
+                console.log();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+             phonon.notif(error.message, 3000, true);
+           });
+
           new Vue(
             { el: '#form', 
                 data: {
                 search: '',
-                formList : [
-                  new Form('Form 1','#!fillformpage/Form1'),
-                  new Form('Form 2','#!fillformpage/Form2'),
-                  new Form('Form 3','#!fillformpage/Form3'),
-                  new Form('Form 4','#!fillformpage/Form4'),
-                  new Form('Form 5','#!fillformpage/Form5'),
-                  new Form('Form 6','#!fillformpage/Form6'),
-                  new Form('Form 7','#!fillformpage/Form7')
-                ],
+                formList : formList,
                     isSearch:false
                 },
                 methods: {
@@ -137,22 +205,77 @@ app.on({page: 'fillformpage', preventClose: true, content: 'fillformpage.html', 
     activity.onClose(function(self) {
         self.close();
     });
-    activity.onHashChanged(function(data) {
-        phonon.forms.update(document.querySelector('#input-1'))=data;
-    });
+
 
 });
 
 //Music Page
 app.on({page: 'musicpage', preventClose: true, content: 'musicpage.html', readyDelay: 1},function(activity){
-
+    class Music {
+        constructor(title,link) {
+          this.title = title;
+          this.link=link;
+        }
+      }
+      
     activity.onCreate(function(){
-        
+
+        var musicList=[];
+        axios.get('http://192.168.31.99:8080/api/getMusic', {
+            name: this.name,
+            phoneNumber: this.phoneNumber,
+            password:this.password,
+          })
+          .then(function (response) {
+            if(response.data.errors){
+                phonon.notif(response.data.errors, 3000, true);
+
+            }
+            else{
+                response.data.data.forEach(element => {
+                    musicList.push(new Music(element.title,'#!playMusic/'+element.title));
+                });
+                
+                console.log();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+             phonon.notif(error.message, 3000, true);
+           });
+
+          new Vue(
+            { el: '#music', 
+                data: {
+                search: '',
+                musicList : musicList,
+                    isSearch:false
+                },
+                methods: {
+                    swaptoSearch: function(swap)
+                    {
+                    this.isSearch = swap;
+                    }
+                },
+                computed: {
+                    filteredList() {
+                      return this.musicList.filter(music => {
+                        return music.title.toLowerCase().includes(this.search.toLowerCase())
+                      })
+                    }
+                  }
+            });
+            
     });
+    activity.onClose(function(self) {
+            self.close();
+    });
+
 
     activity.onClose(function(self) {
         self.close();
     });
+
 
 });
 
@@ -167,25 +290,6 @@ app.on({page: 'bookpage', preventClose: true, content: 'bookpage.html', readyDel
       }
 
     activity.onCreate(function(){
-
-        function myFunction() {
-            // Declare variables
-            var input, filter, ul, li, a, i;
-            input = document.getElementById('myInput');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("myUL");
-            li = ul.getElementsByTagName('li');
-        
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
-            }
-        }
 
         new Vue(
             { el: '#book', 
@@ -234,25 +338,6 @@ app.on({page: 'videopage', preventClose: true, content: 'videopage.html', readyD
       }
 
     activity.onCreate(function(){
-
-        function myFunction() {
-            // Declare variables
-            var input, filter, ul, li, a, i;
-            input = document.getElementById('myInput');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("myUL");
-            li = ul.getElementsByTagName('li');
-        
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
-            }
-        }
 
         new Vue(
             { el: '#video', 

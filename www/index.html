@@ -4,7 +4,6 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no"/>
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-
         <link rel="stylesheet" href="dist/css/phonon.css"/>
         <title  id="appTitle" >OIP</title>
     </head>
@@ -31,27 +30,29 @@
             <div class="content padded-full">
 
                     <div id="login-form">
-                        <input type="text" placeholder="Name" v-model="name">
                         <input type="number" placeholder="Phone Number" v-model="phoneNumber">
                         <input type="password" placeholder="Password" v-model="password">
-
-                        <button class="btn fit-parent primary " v-on:click="processForm">Start</button>
+                        <br>
+                        <button class="btn fit-parent primary " v-on:click="processForm">Login</button>
+                        <br>
+                        <button data-navigation='registerpage' class="btn fit-parent secondary ">Register</button>
                     </div>
             </div>
         </home>
 
         <!-- for the second page, Phonon will load its content. -->
         <menupage data-page="true"></menupage>
+        <registerpage data-page="true"></registerpage>
         <formpage data-page="true"></formpage>
         <fillformpage data-page="true"></fillformpage>
         <musicpage data-page="true"></musicpage> 
+        <playmusicpage data-page="true"></playmusicpage> 
         <bookpage data-page="true"></bookpage>
         <videopage data-page="true"></videopage>
 
         <!-- scripts -->
         <script src="js/vue.js"></script>
         <script src="js/axios.js"></script>
-        <script src="js/jquery-3.3.1.slim.min.js"></script>
         <script src="dist/js/phonon.js"></script>
 
         <!-- our app config -->
