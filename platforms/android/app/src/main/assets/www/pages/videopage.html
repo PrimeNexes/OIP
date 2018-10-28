@@ -20,7 +20,7 @@
                     </template>
         <div class="content">
             <ul class="list" v-for="video in filteredList">
-                <li><a v-bind:href="video.link" class="padded-list">{{video.title}}</a></li>
+                <li><a v-on:click="openwindow(video.title) class="padded-list">{{video.title}}</a></li>
             </ul>
         </div>
     </div>

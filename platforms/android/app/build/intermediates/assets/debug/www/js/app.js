@@ -36,25 +36,25 @@ app.on({page: 'home', preventClose: false, content: null},function(activity){
             // our methods
             methods: {
               processForm: function() {
-                axios.post('http://192.168.31.99:8080/api/login', {
-                    name: this.name,
-                    phoneNumber: this.phoneNumber,
-                    password:this.password,
+                // axios.post('http://192.168.31.99:8080/api/login', {
+                //     name: this.name,
+                //     phoneNumber: this.phoneNumber,
+                //     password:this.password,
                     
-                  })
-                  .then(function (response) {
-                    if(response.data.errors){
-                        phonon.notif(response.data.errors, 3000, true);
+                //   })
+                //   .then(function (response) {
+                //     if(response.data.errors){
+                //         phonon.notif(response.data.errors, 3000, true);
 
-                    }
-                    else{
-                        console.log(response.data);
+                //     }
+                //     else{
+                //         console.log(response.data);
                         phonon.navigator().changePage('menupage');
-                    }
-                  })
-                  .catch(function (error) {
-                    phonon.notif(error.message, 3000, true);
-                  });
+                //     }
+                //   })
+                //   .catch(function (error) {
+                //     phonon.notif(error.message, 3000, true);
+                //   });
                 
               }
             }
@@ -144,8 +144,9 @@ app.on({page: 'formpage', preventClose: true, content: 'formpage.html', readyDel
       
     activity.onCreate(function(){
 
-        var formList={};
-        axios.post('http://localhost:8080/api/getForm', {
+        var formList=[];
+        formList.push(new Form('Video Link','https://www.youtube.com/watch?v=Iy4G2_nTkRU'));
+        axios.get('http://192.168.31.99:8080/api/getForms', {
             name: this.name,
             phoneNumber: this.phoneNumber,
             password:this.password,
@@ -156,10 +157,15 @@ app.on({page: 'formpage', preventClose: true, content: 'formpage.html', readyDel
 
             }
             else{
-                console.log(response.data);
+                response.data.data.forEach(element => {
+                    formList.push(new Form(element.title,'#!fillformpage/'+element.title));
+                });
+                
+                console.log();
             }
           })
           .catch(function (error) {
+            console.log(error);
              phonon.notif(error.message, 3000, true);
            });
 
@@ -167,18 +173,13 @@ app.on({page: 'formpage', preventClose: true, content: 'formpage.html', readyDel
             { el: '#form', 
                 data: {
                 search: '',
-                formList : [
-                  new Form('Form 1','#!fillformpage/Form1'),
-                  new Form('Form 2','#!fillformpage/Form2'),
-                  new Form('Form 3','#!fillformpage/Form3'),
-                  new Form('Form 4','#!fillformpage/Form4'),
-                  new Form('Form 5','#!fillformpage/Form5'),
-                  new Form('Form 6','#!fillformpage/Form6'),
-                  new Form('Form 7','#!fillformpage/Form7')
-                ],
+                formList : formList,
                     isSearch:false
                 },
                 methods: {
+                    openwindow:function(link){
+                        window.open(link , '_system');
+                    },
                     swaptoSearch: function(swap)
                     {
                     this.isSearch = swap;
@@ -208,30 +209,72 @@ app.on({page: 'fillformpage', preventClose: true, content: 'fillformpage.html', 
     activity.onClose(function(self) {
         self.close();
     });
-    activity.onHashChanged(function(data) {
-        phonon.forms.update(document.querySelector('#input-1'))=data;
-    });
+
 
 });
 
 //Music Page
 app.on({page: 'musicpage', preventClose: true, content: 'musicpage.html', readyDelay: 1},function(activity){
-
     class Music {
-        constructor(info) {
-          this.info = info;
+        constructor(title,link) {
+          this.title = title;
+          this.link=link;
         }
-    }
-
+      }
+      
     activity.onCreate(function(){
-        new Vue(
-        { el: '#title-text', 
-              data: {
-                    music : new Music('Hey Girl Florence Welch, Lady Gaga')
+
+        var musicList=[];
+        axios.get('http://192.168.31.99:8080/api/getMusic', {
+            name: this.name,
+            phoneNumber: this.phoneNumber,
+            password:this.password,
+          })
+          .then(function (response) {
+            if(response.data.errors){
+                phonon.notif(response.data.errors, 3000, true);
+
             }
-          });
-          
+            else{
+                response.data.data.forEach(element => {
+                    musicList.push(new Music(element.title,'#!playMusic/'+element.title));
+                });
+                
+                console.log();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+             phonon.notif(error.message, 3000, true);
+           });
+
+          new Vue(
+            { el: '#music', 
+                data: {
+                search: '',
+                musicList : musicList,
+                    isSearch:false
+                },
+                methods: {
+                    swaptoSearch: function(swap)
+                    {
+                    this.isSearch = swap;
+                    }
+                },
+                computed: {
+                    filteredList() {
+                      return this.musicList.filter(music => {
+                        return music.title.toLowerCase().includes(this.search.toLowerCase())
+                      })
+                    }
+                  }
+            });
+            
     });
+    activity.onClose(function(self) {
+            self.close();
+    });
+
 
     activity.onClose(function(self) {
         self.close();
@@ -299,19 +342,30 @@ app.on({page: 'videopage', preventClose: true, content: 'videopage.html', readyD
       }
 
     activity.onCreate(function(){
+        var videoList=[];
+        axios.get('http://192.168.31.99:8080/api/getMusic')
+          .then(function (response) {
+            if(response.data.errors){
+                phonon.notif(response.data.errors, 3000, true);
 
+            }
+            else{
+                response.data.data.forEach(element => {
+                    musicList.push(new Video(element.title,element.link));
+                });
+                
+                console.log();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+             phonon.notif(error.message, 3000, true);
+           });
         new Vue(
             { el: '#video', 
                 data: {
                 search: '',
-                formList : [
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#')
-                ],
+                formList : videoList,
                     isSearch:false
                 },
                 methods: {

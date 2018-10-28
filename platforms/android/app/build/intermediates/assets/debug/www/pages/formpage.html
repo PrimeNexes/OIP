@@ -19,7 +19,7 @@
                 </template>
     <div class="content">
         <ul class="list" v-for="form in filteredList">
-            <li><a v-bind:href="form.link" class="padded-list">{{form.title}}</a></li>
+            <li><a  v-on:click="openwindow(form.link)" class="padded-list">{{form.title}}</a></li>
         </ul>
     </div>
 </div>

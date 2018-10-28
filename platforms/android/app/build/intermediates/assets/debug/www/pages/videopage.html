@@ -1,4 +1,5 @@
 <videopage class="app-page" >
+        <style></style>
         <div id="video">
             <template v-if="isSearch === false">
                     <header class="header-bar" id="headerBar">
@@ -19,7 +20,7 @@
                     </template>
         <div class="content">
             <ul class="list" v-for="video in filteredList">
-                <li><a v-bind:href="video.link" class="padded-list">{{video.title}}</a></li>
+                <li><a v-bind:href="javascript:window.open(video.link, '_system');" class="padded-list">{{video.title}}</a></li>
             </ul>
         </div>
     </div>

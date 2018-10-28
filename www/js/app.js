@@ -36,25 +36,25 @@ app.on({page: 'home', preventClose: false, content: null},function(activity){
             // our methods
             methods: {
               processForm: function() {
-                axios.post('http://192.168.31.99:8080/api/login', {
-                    name: this.name,
-                    phoneNumber: this.phoneNumber,
-                    password:this.password,
+                // axios.post('http://192.168.31.99:8080/api/login', {
+                //     name: this.name,
+                //     phoneNumber: this.phoneNumber,
+                //     password:this.password,
                     
-                  })
-                  .then(function (response) {
-                    if(response.data.errors){
-                        phonon.notif(response.data.errors, 3000, true);
+                //   })
+                //   .then(function (response) {
+                //     if(response.data.errors){
+                //         phonon.notif(response.data.errors, 3000, true);
 
-                    }
-                    else{
-                        console.log(response.data);
+                //     }
+                //     else{
+                //         console.log(response.data);
                         phonon.navigator().changePage('menupage');
-                    }
-                  })
-                  .catch(function (error) {
-                    phonon.notif(error.message, 3000, true);
-                  });
+                //     }
+                //   })
+                //   .catch(function (error) {
+                //     phonon.notif(error.message, 3000, true);
+                //   });
                 
               }
             }
@@ -233,7 +233,7 @@ app.on({page: 'musicpage', preventClose: true, content: 'musicpage.html', readyD
             }
             else{
                 response.data.data.forEach(element => {
-                    musicList.push(new Music(element.title,'#!playMusic/'+element.title));
+                    musicList.push(new Music(element.title,element.link));
                 });
                 
                 console.log();
@@ -252,6 +252,10 @@ app.on({page: 'musicpage', preventClose: true, content: 'musicpage.html', readyD
                     isSearch:false
                 },
                 methods: {
+                    openwindow:function(link){
+                        console.log(link);
+                        window.open(link , '_system');
+                    },
                     swaptoSearch: function(swap)
                     {
                     this.isSearch = swap;
@@ -281,7 +285,7 @@ app.on({page: 'musicpage', preventClose: true, content: 'musicpage.html', readyD
 
 //Ebook Page
 app.on({page: 'bookpage', preventClose: true, content: 'bookpage.html', readyDelay: 1},function(activity){
-
+    var bookList=[];
     class Books {
         constructor(title,link) {
           this.title = title;
@@ -295,18 +299,13 @@ app.on({page: 'bookpage', preventClose: true, content: 'bookpage.html', readyDel
             { el: '#book', 
                 data: {
                 search: '',
-                formList : [
-                  new Books('Book 1','#'),
-                  new Books('Book 2','#'),
-                  new Books('Book 3','#'),
-                  new Books('Book 4','#'),
-                  new Books('Book 5','#'),
-                  new Books('Book 6','#')
-
-                ],
+                formList : bookList,
                     isSearch:false
                 },
                 methods: {
+                    openwindow:function(link){
+                        window.open(link , '_system');
+                    },
                     swaptoSearch: function(swap)
                     {
                     this.isSearch = swap;
@@ -338,26 +337,40 @@ app.on({page: 'videopage', preventClose: true, content: 'videopage.html', readyD
       }
 
     activity.onCreate(function(){
+        var videoList=[];
+        axios.get('http://192.168.31.99:8080/api/getVideo')
+          .then(function (response) {
+            if(response.data.errors){
+                phonon.notif(response.data.errors, 3000, true);
 
+            }
+            else{
+                response.data.data.forEach(element => {
+                    musicList.push(new Video(element.title,element.link));
+                });
+                
+                console.log();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+             phonon.notif(error.message, 3000, true);
+           });
         new Vue(
             { el: '#video', 
                 data: {
                 search: '',
-                formList : [
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#'),
-                    new Video('Videos','#')
-                ],
+                formList : videoList,
                     isSearch:false
                 },
                 methods: {
                     swaptoSearch: function(swap)
                     {
                     this.isSearch = swap;
-                    }
+                    },
+                    openwindow:function(link){
+                        window.open(link , '_system');
+                    },
                 },
                 computed: {
                     filteredList() {

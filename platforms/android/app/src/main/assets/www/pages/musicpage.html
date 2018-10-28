@@ -19,7 +19,7 @@
 							</template>
 	<div class="content">
 			<ul class="list" v-for="music in filteredList">
-					<li><a v-bind:href="music.link" class="padded-list">{{music.title}}</a></li>
+					<li><a v-on:click="openwindow(music.link)" class="padded-list">{{music.title}}</a></li>
 			</ul>
 	</div>
 </div>
